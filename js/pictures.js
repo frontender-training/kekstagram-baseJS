@@ -9,15 +9,25 @@ var picturesList = document.querySelector('.pictures');
 // Найдем шаблон который мы будем копировать.
 var picturesTemplate = document.querySelector('#picture-template').content;
 
-var listNotes = generateNotes();
+clonePicture();
 
-// Отрисуем наш шаблон в документ
-for (var i = 1; i < listNotes.length + 1; i++) {
+function clonePicture() {
+  var listNotes = generateNotes();
+  var fragment = document.createDocumentFragment();
+
+  for (var i = 1; i < listNotes.length; i++) {
+    fragment.appendChild(renderPicture(listNotes[i]));
+  }
+  picturesList.appendChild(fragment);
+}
+
+// Генерируем наш шаблон в документ
+function renderPicture(image) {
   var picturesElement = picturesTemplate.cloneNode(true);
-  picturesElement.querySelector('.picture img').src = listNotes[i].url;
-  picturesElement.querySelector('.picture-likes').textContent = listNotes[i].likes;
-  picturesElement.querySelector('.picture-comments').textContent = listNotes[i].comments;
-  picturesList.appendChild(picturesElement);
+  picturesElement.querySelector('.picture img').src = image.url;
+  picturesElement.querySelector('.picture-likes').textContent = image.likes;
+  picturesElement.querySelector('.picture-comments').textContent = image.comments;
+  return picturesElement;
 }
 
 // Функция, возвращающаая массив объектов записей в блоге
