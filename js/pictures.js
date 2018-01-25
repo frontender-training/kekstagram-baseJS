@@ -13,6 +13,13 @@ clonePicture();
 var uploadPicture = document.querySelector('.upload-overlay');
 uploadPicture.classList.add('invisible');
 
+var gallery = document.querySelector('.gallery-overlay');
+gallery.classList.remove('invisible');
+
+gallery.querySelector('.gallery-overlay-image').src = listNotes[0].url;
+gallery.querySelector('.likes-count').textContent = listNotes[0].likes;
+gallery.querySelector('.comments-count').textContent = listNotes[0].comments;
+
 // Клонируем фотографии
 function clonePicture() {
   var fragment = document.createDocumentFragment();
