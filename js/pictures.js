@@ -8,6 +8,19 @@ var COMMENTS = ['Всё отлично!',
                 'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
                 'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'];
 
+// Функция, возвращающаая массив объектов записей в блоге
+function generateNotes() {
+  var notes = [];
+  for (var i = 0; i < COUNT_PHOTOS + 1; i++) {
+    notes.push({
+      url: '/photos/' + i + '.jpg',
+      likes: getRandomNumber(15, 200),
+      comments: getRandomElement(COMMENTS)
+    });
+  }
+  return notes;
+}
+
 // Функция, возвращающая случайное число в диапазоне
 function getRandomNumber(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
