@@ -3,19 +3,21 @@
 var COUNT_PHOTOS = 25;
 var COMMENTS = ['Всё отлично!', 'В целом всё неплохо. Но не всё.', 'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.', 'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.', 'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.', 'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'];
 
-// Найдем элемент в который мы будем вставлять наши изображения
-var picturesList = document.querySelector('.pictures');
+var picturesList = document.querySelector('.pictures'); // Найдем элемент в который мы будем вставлять наши изображения
+var picturesTemplate = document.querySelector('#picture-template').content; // Найдем шаблон который мы будем копировать.
 
-// Найдем шаблон который мы будем копировать.
-var picturesTemplate = document.querySelector('#picture-template').content;
+var listNotes = generateNotes();
 
 clonePicture();
 
+var uploadPicture = document.querySelector('.upload-overlay');
+uploadPicture.classList.add('invisible');
+
+// Клонируем фотографии
 function clonePicture() {
-  var listNotes = generateNotes();
   var fragment = document.createDocumentFragment();
 
-  for (var i = 1; i < listNotes.length; i++) {
+  for (var i = 0; i < listNotes.length; i++) {
     fragment.appendChild(renderPicture(listNotes[i]));
   }
   picturesList.appendChild(fragment);
@@ -33,7 +35,7 @@ function renderPicture(image) {
 // Функция, возвращающаая массив объектов записей в блоге
 function generateNotes() {
   var notes = [];
-  for (var i = 0; i < COUNT_PHOTOS + 1; i++) {
+  for (var i = 1; i < COUNT_PHOTOS + 1; i++) {
     notes.push({
       url: 'photos/' + i + '.jpg',
       likes: getRandomNumber(15, 200),
