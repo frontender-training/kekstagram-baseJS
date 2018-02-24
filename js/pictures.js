@@ -12,33 +12,50 @@ var picturesTemplate = document.querySelector('#picture-template').content; // �
 var uploadPicture = document.querySelector('.upload-overlay');              // Найдем окно загрузки фотографий.
 var gallery = document.querySelector('.gallery-overlay');                   // Найдем окно для просмотра фотографий
 
+var closePhoto = gallery.querySelector('.gallery-overlay-close');
+
 var listNotes = generateNotes();
+
+closePhoto.addEventListener('click', function() {
+  closePicture();
+});
 
 renderPicturesList();
 closeUploadPopup();
-openPicture();
 
 // Закрываем окно загрузки фотографий
 function closeUploadPopup() {
   uploadPicture.classList.add('invisible');
 }
 
-// Открываем первую фотографию
+// Открываем фотографию
 function openPicture() {
   gallery.classList.remove('invisible');
-  gallery.querySelector('.gallery-overlay-image').src = listNotes[0].url;
-  gallery.querySelector('.likes-count').textContent = listNotes[0].likes;
-  gallery.querySelector('.comments-count').textContent = listNotes[0].comments;
 }
+
+// Открываем фотографию
+function closePicture() {
+  gallery.classList.add('invisible');
+}
+
+picturesList.addEventListener('click', function(evt) {
+  evt.preventDefault();
+  openPicture();
+});
 
 // Клонируем фотографии
 function renderPicturesList() {
   var fragment = document.createDocumentFragment();
-
   for (var i = 0; i < listNotes.length; i++) {
     fragment.appendChild(renderPicture(listNotes[i]));
   }
   picturesList.appendChild(fragment);
+}
+
+function generatePhotoPreview(image) {
+  gallery.querySelector('.gallery-overlay-image').src = image.url;
+  gallery.querySelector('.likes-count').textContent = image.likes;
+  gallery.querySelector('.comments-count').textContent = image.comments;
 }
 
 // Генерируем наш шаблон в документ
