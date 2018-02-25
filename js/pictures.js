@@ -9,61 +9,64 @@ var DataPicture = {
 
 var picturesList = document.querySelector('.pictures');                     // Найдем элемент в который мы будем вставлять наши изображения
 var picturesTemplate = document.querySelector('#picture-template').content; // Найдем шаблон который мы будем копировать.
-var uploadPicture = document.querySelector('.upload-overlay');              // Найдем окно загрузки фотографий.
-var gallery = document.querySelector('.gallery-overlay');                   // Найдем окно для просмотра фотографий
+var uploadOverlay = document.querySelector('.upload-overlay');              // Найдем окно загрузки фотографий.
+var galleryOverlay = document.querySelector('.gallery-overlay');                   // Найдем окно для просмотра фотографий
 
-var closePhoto = gallery.querySelector('.gallery-overlay-close');
+var galleryOverlayClose = galleryOverlay.querySelector('.gallery-overlay-close');
 
 var listNotes = generateNotes();
 
-closePhoto.addEventListener('click', function() {
-  closePicture();
-});
-
-renderPicturesList();
-closeUploadPopup();
+galleryOverlayClose.addEventListener('click', closePicture);
 
 // Закрываем окно загрузки фотографий
-function closeUploadPopup() {
-  uploadPicture.classList.add('invisible');
+function closeUploadOverlay() {
+  uploadOverlay.classList.add('invisible');
 }
 
 // Открываем фотографию
 function openPicture() {
-  gallery.classList.remove('invisible');
+  galleryOverlay.classList.remove('invisible');
 }
 
 // Открываем фотографию
 function closePicture() {
-  gallery.classList.add('invisible');
+  galleryOverlay.classList.add('invisible');
 }
 
-picturesList.addEventListener('click', function(evt) {
-  evt.preventDefault();
-  openPicture();
-});
+renderPicturesList(listNotes, picturesList);
+closeUploadOverlay();
+generatePicturePreview(listNotes, 0);
 
 // Клонируем фотографии
-function renderPicturesList() {
+function renderPicturesList(array, container) {
   var fragment = document.createDocumentFragment();
-  for (var i = 0; i < listNotes.length; i++) {
-    fragment.appendChild(renderPicture(listNotes[i]));
-  }
-  picturesList.appendChild(fragment);
+
+  array.forEach(function (item) {
+    fragment.appendChild(renderPictures(item));
+  });
+
+  container.appendChild(fragment);
 }
 
-function generatePhotoPreview(image) {
-  gallery.querySelector('.gallery-overlay-image').src = image.url;
-  gallery.querySelector('.likes-count').textContent = image.likes;
-  gallery.querySelector('.comments-count').textContent = image.comments;
+function generatePicturePreview(image, index) {
+  galleryOverlay.querySelector('.gallery-overlay-image').src = image[index].url;
+  galleryOverlay.querySelector('.likes-count').textContent = image[index].likes;
+  galleryOverlay.querySelector('.comments-count').textContent = image[index].comments;
 }
 
 // Генерируем наш шаблон в документ
-function renderPicture(image) {
+function renderPictures(image) {
   var picturesElement = picturesTemplate.cloneNode(true);
+
   picturesElement.querySelector('.picture img').src = image.url;
   picturesElement.querySelector('.picture-likes').textContent = image.likes;
   picturesElement.querySelector('.picture-comments').textContent = image.comments;
+
+  picturesElement.addEventListener('click', function(evt) {
+    evt.preventDefault();
+    generatePicturePreview(image);
+  });
+
   return picturesElement;
 }
 
