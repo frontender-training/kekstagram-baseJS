@@ -1,5 +1,6 @@
 'use strict';
 
+// Исходные данные для формирирования листа с фотографиями
 var DATA_PICTURE = {
   COUNT_PHOTOS: 25,
   MIN_LIKES: 15,
@@ -7,90 +8,137 @@ var DATA_PICTURE = {
   COMMENTS: ['Всё отлично!', 'В целом всё неплохо. Но не всё.', 'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.', 'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.', 'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.', 'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!']
 };
 
-var KEYCODE = {
+// Код клавиш для обработки событий
+var KEY_CODE = {
   ENTER: 13,
   ESC: 27
 };
 
-var picturesList = document.querySelector('.pictures');                     // Найдем элемент в который мы будем вставлять наши изображения
-var picturesTemplate = document.querySelector('#picture-template').content; // Найдем шаблон который мы будем копировать.
-var uploadOverlay = document.querySelector('.upload-overlay');              // Найдем окно загрузки фотографий.
-var uploadForm = document.querySelector('.upload-form');
+// Для вывода превьюшек всех фотографий
+var picturesList = document.querySelector('.pictures');
+var picturesTemplate = getTemplateClone('#picture-template', '.picture');
 
-var uploadFormFile = uploadForm.querySelector('#upload-file');
+// Для формы редактирования загруженной фотографии
+var uploadOverlay = document.querySelector('.upload-overlay');
+var uploadForm = uploadOverlay.querySelector('.upload-form');
+var uploadFormFile = uploadOverlay.querySelector('#upload-file');
+var closeUploadBtn = uploadOverlay.querySelector('.upload-form-cancel');
+var uploadFormComment = uploadOverlay.querySelector('.upload-form-description');
 
-var uploadFormCancel = document.querySelector('.upload-form-cancel');
+// Для увеличения и просмотра фотографии в полном размере
+var galleryOverlay = document.querySelector('.gallery-overlay');
 
-var uploadFormComment = uploadForm.querySelector('.upload-form-description');
+var galleryUrl = galleryOverlay.querySelector('.gallery-overlay-image');
+var galleryLikes = galleryOverlay.querySelector('.likes-count');
+var galleryComments = galleryOverlay.querySelector('.comments-count');
 
-var galleryOverlay = document.querySelector('.gallery-overlay');                   // Найдем окно для просмотра фотографий
-
-var galleryOverlayClose = galleryOverlay.querySelector('.gallery-overlay-close');
+var closeGalleryBtn = galleryOverlay.querySelector('.gallery-overlay-close');
 
 var listNotes = generateNotes();
 
-uploadFormFile.addEventListener('change', openUploadOverlay);
+// uploadFormFile.addEventListener('change', openUploadOverlay);
 
-uploadFormCancel.addEventListener('click', closeUploadOverlay);
+// closeUploadBtn.addEventListener('click', closeUploadOverlay);
 
-galleryOverlayClose.addEventListener('click', closePicture);
-
-// Функция закрытия окна редактирования фото по клику на ESC
-function onUploadOverlayEscPress(evt) {
-  if (evt.keyCode === KEYCODE.ESC) {
-    closeUploadOverlay()
-  }
-}
-
-// Закрываем окно загрузки фотографий
-function closeUploadOverlay() {
-  if (document.activeElement !== uploadFormComment) {
-    uploadOverlay.classList.add('invisible');
-    document.removeEventListener('keydown', onUploadOverlayEscPress);
-  }
-}
-
-// Открываем окно загрузки фотографий
-function openUploadOverlay() {
-  uploadOverlay.classList.remove('invisible');
-  document.addEventListener('keydown', onUploadOverlayEscPress);
-}
-
-// Открываем фотографию
-function openPicture() {
-  galleryOverlay.classList.remove('invisible');
-}
-
-// Открываем фотографию
-function closePicture() {
-  galleryOverlay.classList.add('invisible');
-}
+// closeUploadBtn.addEventListener('click', closePicture);
 
 renderPicturesList(listNotes, picturesList);
-closeUploadOverlay();
-generatePicturePreview(listNotes, 0);
+
+// Функция закрытия окна редактирования фото по клику на ESC
+// function onUploadOverlayEscPress(evt) {
+//   if (evt.keycode === KEY_CODE.ESC) {
+//     closeUploadOverlay();
+//   }
+// }
+
+// Закрываем окно загрузки фотографий
+// function closeUploadOverlay() {
+//   if (document.activeElement !== uploadFormComment) {
+//     uploadOverlay.classList.add('invisible');
+//     document.removeEventListener('keydown', onUploadOverlayEscPress);
+//   }
+// }
+
+// Открываем окно загрузки фотографий
+// function openUploadOverlay() {
+//   uploadOverlay.classList.remove('invisible');
+//   uploadOverlay.addEventListener('keydown', onUploadOverlayEscPress);
+// }
+
+// Обработчики закрытия просмотра фотографии
+//Клик на кнопке
+function onPictureCloseBtnClick() {
+  closePicture();
+}
+//Нажатие на клавишу enter
+function onPictureCloseBtnEnter (evt) {
+  if (evt.keyCode === KEY_CODE.ENTER) {
+    closePicture();
+  }
+}
+
+//Нажатие на клавишу enter
+function onPictureCloseBtnEsc (evt) {
+  if (evt.keyCode === KEY_CODE.ESC) {
+    closePicture();
+  }
+}
+
+// Открываем фотографию
+function openPicture(pictureIndex) {
+  setActivatePicture(pictureIndex);
+  galleryOverlay.classList.remove('invisible');
+  // добавление обработчика клика по кнопке закрытия галереи
+  closeGalleryBtn.addEventListener('click', onPictureCloseBtnClick);
+  // добавление обработчика нажатия на enter по кнопке закрытия галереи
+  closeGalleryBtn.addEventListener('keydown', onPictureCloseBtnEnter);
+  // добавление обработчика нажатия на enter по кнопке закрытия галереи
+  document.addEventListener('keydown', onPictureCloseBtnEsc);
+}
+
+// Закрываем фотографию
+function closePicture() {
+  galleryOverlay.classList.add('invisible');
+  // удаление обработчика клика по кнопке открытия галереи
+  closeGalleryBtn.removeEventListener('click', onPictureCloseBtnClick);
+  // удаление обработчика нажатия на enter по кнопке закрытия галереи
+  closeGalleryBtn.addEventListener('keydown', onPictureCloseBtnEnter);
+  // удаление обработчика нажатия на enter по кнопке закрытия галереи
+  document.addEventListener('keydown', onPictureCloseBtnEsc);
+}
+
+function setActivatePicture(imageIndex) {
+  galleryUrl.src = listNotes[imageIndex].url;
+  galleryLikes.textContent = listNotes[imageIndex].likes;
+  galleryComments.textContent = listNotes[imageIndex].comments;
+}
 
 // Клонируем фотографии
 function renderPicturesList(array, container) {
   var fragment = document.createDocumentFragment();
 
-  array.forEach(function (item) {
-    fragment.appendChild(renderPictures(item));
+  array.forEach(function (item, pictureNumber) {
+    fragment.appendChild(renderPictures(item, pictureNumber));
   });
 
   container.appendChild(fragment);
-
-  uploadForm.classList.remove('invisible');
+  uploadOverlay.classList.add('invisible');
 }
 
-function generatePicturePreview(image, index) {
-  galleryOverlay.querySelector('.gallery-overlay-image').src = image[index].url;
-  galleryOverlay.querySelector('.likes-count').textContent = image[index].likes;
-  galleryOverlay.querySelector('.comments-count').textContent = image[index].comments;
+// получение нужного дом-элемента из шаблона для клонирования
+function getTemplateClone(template, innerSelector) {
+  var templateElement = document.querySelector(template);
+  var elementToClone = templateElement.querySelector(innerSelector);
+
+  if ('content' in templateElement) {
+    elementToClone = templateElement.content.querySelector(innerSelector);
+  }
+
+  return elementToClone;
 }
 
 // Генерируем наш шаблон в документ
-function renderPictures(image) {
+function renderPictures(image, pictureIndex) {
   var picturesElement = picturesTemplate.cloneNode(true);
 
   picturesElement.querySelector('.picture img').src = image.url;
@@ -99,7 +147,14 @@ function renderPictures(image) {
 
   picturesElement.addEventListener('click', function(evt) {
     evt.preventDefault();
-    generatePicturePreview(image);
+    openPicture(pictureIndex);
+  });
+
+  picturesElement.addEventListener('keydown', function(evt) {
+    if (evt.keyCode === KEY_CODE.ENTER) {
+      evt.preventDefault();
+      openPicture(pictureIndex);
+    }
   });
 
   return picturesElement;
