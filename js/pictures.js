@@ -15,8 +15,8 @@ var gallery = document.querySelector('.gallery-overlay');                   // �
 var listNotes = generateNotes();
 
 renderPicturesList();
-closeUploadPopup();
-openPicture();
+// closeUploadPopup();
+// openPicture();
 
 // Закрываем окно загрузки фотографий
 function closeUploadPopup() {
