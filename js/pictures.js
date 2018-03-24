@@ -44,7 +44,7 @@ var listNotes = generateNotes();
 renderPicturesList(listNotes, picturesList);
 
 // Функция закрытия окна редактирования фото по клику на ESC
-function onUploadOverlayEscPress(evt) {
+function onUploadOverlayKeyDown(evt) {
   if (evt.keyCode === KEY_CODE.ESC) {
     closeUploadOverlay();
   }
@@ -59,7 +59,7 @@ function closeUploadOverlay() {
     // удаляем обработчик закрытия окна по кноаке отправить
     submitUploadBtn.addEventListener('click', closeUploadOverlay);
     // eдаляем обработчик закрытия окна по клавише ESC
-    document.removeEventListener('keydown', onUploadOverlayEscPress);
+    document.removeEventListener('keydown', onUploadOverlayKeyDown);
     // скрываем форму загрузки изображения
     uploadFile.addEventListener('change', openUploadOverlay);
   }
@@ -73,7 +73,7 @@ function openUploadOverlay() {
   // добавляем обработчик закрытия окна по кноаке отправить
   submitUploadBtn.addEventListener('click', closeUploadOverlay);
   // добавляем обработчик закрытия окна по клавише ESC
-  document.addEventListener('keydown', onUploadOverlayEscPress);
+  document.addEventListener('keydown', onUploadOverlayKeyDown);
   // скрываем форму загрузки изображения
   uploadFile.removeEventListener('change', openUploadOverlay);
 }
@@ -86,9 +86,9 @@ function openPicture(pictureIndex) {
   // добавление обработчика клика по кнопке закрытия галереи
   closeGalleryBtn.addEventListener('click', onPictureCloseBtnClick);
   // добавление обработчика нажатия на enter по кнопке закрытия галереи
-  closeGalleryBtn.addEventListener('keydown', onPictureCloseBtnEnter);
+  closeGalleryBtn.addEventListener('keydown', onPictureCloseKeyDown);
   // добавление обработчика нажатия на enter по кнопке закрытия галереи
-  document.addEventListener('keydown', onPictureCloseBtnEsc);
+  document.addEventListener('keydown', onPictureCloseKeyDown);
 }
 
 // Закрываем фотографию
@@ -97,9 +97,9 @@ function closePicture() {
   // удаление обработчика клика по кнопке открытия галереи
   closeGalleryBtn.removeEventListener('click', onPictureCloseBtnClick);
   // удаление обработчика нажатия на enter по кнопке закрытия галереи
-  closeGalleryBtn.addEventListener('keydown', onPictureCloseBtnEnter);
+  closeGalleryBtn.addEventListener('keydown', onPictureCloseKeyDown);
   // удаление обработчика нажатия на enter по кнопке закрытия галереи
-  document.addEventListener('keydown', onPictureCloseBtnEsc);
+  document.addEventListener('keydown', onPictureCloseKeyDown);
 }
 
 // Обработчики закрытия просмотра фотографии
@@ -107,16 +107,10 @@ function closePicture() {
 function onPictureCloseBtnClick() {
   closePicture();
 }
-//Нажатие на клавишу enter
-function onPictureCloseBtnEnter (evt) {
-  if (evt.keyCode === KEY_CODE.ENTER) {
-    closePicture();
-  }
-}
 
-//Нажатие на клавишу enter
-function onPictureCloseBtnEsc (evt) {
-  if (evt.keyCode === KEY_CODE.ESC) {
+//Нажатие на клавишу enter и esc
+function onPictureCloseKeyDown (evt) {
+  if (evt.keyCode === KEY_CODE.ENTER && KEY_CODE.ESC) {
     closePicture();
   }
 }
