@@ -1,8 +1,18 @@
 'use strict';
 
 var uploadPicture = document.querySelector('.upload-overlay');
-
 var uploadPictureComment = uploadPicture.querySelector('.upload-form-description');
+var uploadPictureFilters = uploadPicture.querySelector('.upload-filter-controls');
+var filterPicturePreview = uploadPicture.querySelector('.filter-image-preview');
+
+// Добавление фильтра к картинке по клику
+uploadPictureFilters.addEventListener('click', function(evt) {
+   setFilter(evt);
+});
+
+function setFilter(evt) {
+  filterPicturePreview.className = 'filter-image-preview filter-' + evt.target.value;
+}
 
 // Валидация формы
 uploadPictureComment.addEventListener('invalid', function (evt) {
