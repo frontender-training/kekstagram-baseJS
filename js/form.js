@@ -5,8 +5,8 @@ var uploadPictureComment = uploadPicture.querySelector('.upload-form-description
 var uploadPictureFilters = uploadPicture.querySelector('.upload-filter-controls');
 var filterPicturePreview = uploadPicture.querySelector('.filter-image-preview');
 
-var btnZoomPictureDec = uploadPicture.querySelector('.upload-resize-controls-button-dec');
-var btnZoomPictureInc = uploadPicture.querySelector('.upload-resize-controls-button-inc');
+var btnZoomMinusPicture = uploadPicture.querySelector('.upload-resize-controls-button-dec');
+var btnZoomPlusPicture = uploadPicture.querySelector('.upload-resize-controls-button-inc');
 var zoomPicture = uploadPicture.querySelector('.upload-resize-controls-value');
 
 var counter = 1;
@@ -14,8 +14,8 @@ var step = 0.25;
 var minZoom = 0.25;
 var maxZoom = 1;
 
-btnZoomPictureDec.addEventListener('click', setScale);
-btnZoomPictureInc.addEventListener('click', setScale);
+btnZoomMinusPicture.addEventListener('click', setScale);
+btnZoomPlusPicture.addEventListener('click', setScale);
 
 function enlargeValue() {
   if (counter < maxZoom) {
@@ -59,9 +59,7 @@ function setScale(evt) {
 }
 
 // Добавление фильтра к картинке по клику
-uploadPictureFilters.addEventListener('click', function(evt) {
-   setFilter(evt);
-});
+uploadPictureFilters.addEventListener('click', setFilter);
 
 function setFilter(evt) {
   if (evt.target.checked) {
@@ -69,25 +67,37 @@ function setFilter(evt) {
   }
 }
 
-// Валидация формы
-uploadPictureComment.addEventListener('invalid', function (evt) {
-  if (uploadPictureComment.validity.tooShort) {
-    uploadPictureComment.setCustomValidity('Комментарий должен быть из 30-ти символов');
-  } else if (uploadPictureComment.validity.tooLong) {
-    uploadPictureComment.setCustomValidity('Комментарий не должен превышать 100 символов');
-  } else if (uploadPictureComment.validity.valueMissing) {
-    uploadPictureComment.setCustomValidity('Введите, пожалуйста, комментарий. Это обязательно поле для заполнения');
-  } else {
-    uploadPictureComment.setCustomValidity('');
-  }
-});
+// Добавление обработчика валидации формы
+uploadPictureComment.addEventListener('invalid', validationComment );
 
-// Валидация формы для edge
-uploadPictureComment.addEventListener('textarea', function (evt) {
-  var target = evt.target;
-  if (target.value.length < 30) {
-    target.setCustomValidity('Комментарий должен быть из 30-ти символов');
+// Добавление обработчика валидации формы
+uploadPictureComment.addEventListener('input', showError);
+
+function showError(evt) {
+  var element = evt.target;
+  element.style.outlineColor = element.validity.valid ? '' : 'red';
+}
+
+// Валидация формы
+function validationComment (evt) {
+  var element = evt.target;
+  if (element.validity.tooShort) {
+    element.setCustomValidity('Комментарий должен быть не меньше 30-ти символов' );
+  } else if (element.validity.tooLong) {
+    element.setCustomValidity('Комментарий не должен превышать 100 символов');
+  } else if (element.validity.valueMissing) {
+    element.setCustomValidity('Введите, пожалуйста, комментарий. Это обязательно поле для заполнения');
   } else {
-    target.setCustomValidity('');
+    element.setCustomValidity('');
   }
-});
+}
+
+// // Валидация формы для edge
+// function validationFormEdge(evt) {
+//   var target = evt.target;
+//   if (target.value.length < 30) {
+//     target.setCustomValidity('Комментарий должен быть из 30-ти символов');
+//   } else {
+//     target.setCustomValidity('');
+//   }
+// }
