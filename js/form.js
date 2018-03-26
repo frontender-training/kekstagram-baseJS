@@ -5,13 +5,68 @@ var uploadPictureComment = uploadPicture.querySelector('.upload-form-description
 var uploadPictureFilters = uploadPicture.querySelector('.upload-filter-controls');
 var filterPicturePreview = uploadPicture.querySelector('.filter-image-preview');
 
+var btnZoomPictureDec = uploadPicture.querySelector('.upload-resize-controls-button-dec');
+var btnZoomPictureInc = uploadPicture.querySelector('.upload-resize-controls-button-inc');
+var zoomPicture = uploadPicture.querySelector('.upload-resize-controls-value');
+
+var counter = 1;
+var step = 0.25;
+var minZoom = 0.25;
+var maxZoom = 1;
+
+btnZoomPictureDec.addEventListener('click', setScale);
+btnZoomPictureInc.addEventListener('click', setScale);
+
+function enlargeValue() {
+  if (counter < maxZoom) {
+    return counter += step;
+  }
+  return counter = maxZoom;
+}
+
+function reduceValue() {
+  if (counter > minZoom) {
+    return counter -= step;
+  }
+  return counter = minZoom;
+}
+
+function enlargeValue() {
+  if (counter < maxZoom) {
+    return counter += step;
+  }
+  return counter = maxZoom;
+}
+
+function reduceValue() {
+  if (counter > minZoom) {
+    return counter -= step;
+  }
+  return counter = minZoom;
+}
+
+function setScale(evt) {
+  if (evt.target.classList.contains('upload-resize-controls-button-inc')) {
+    var valueZoom = enlargeValue();
+  }
+
+  if (evt.target.classList.contains('upload-resize-controls-button-dec')) {
+    var valueZoom = reduceValue();
+  }
+
+  zoomPicture.value = valueZoom * 100 + '%';
+  filterPicturePreview.style.transform = 'scale(' + valueZoom + ')';
+}
+
 // Добавление фильтра к картинке по клику
 uploadPictureFilters.addEventListener('click', function(evt) {
    setFilter(evt);
 });
 
 function setFilter(evt) {
-  filterPicturePreview.className = 'filter-image-preview filter-' + evt.target.value;
+  if (evt.target.checked) {
+    filterPicturePreview.className = 'filter-image-preview filter-' + evt.target.value;
+  }
 }
 
 // Валидация формы
