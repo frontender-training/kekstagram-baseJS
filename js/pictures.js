@@ -41,7 +41,10 @@ var closeGalleryBtn = galleryOverlay.querySelector('.gallery-overlay-close');
 
 var listNotes = generateNotes();
 
-renderPicturesList(listNotes, picturesList);
+renderPicturesList();
+// closeUploadPopup();
+// openPicture();
+
 
 // Функция закрытия окна редактирования фото по клику на ESC
 function onUploadOverlayKeyDown(evt) {
@@ -49,7 +52,6 @@ function onUploadOverlayKeyDown(evt) {
     closeUploadOverlay();
   }
 }
-
 // Закрываем окно загрузки фотографий
 function closeUploadOverlay() {
   if (document.activeElement !== uploadFormComment) {
